@@ -5668,6 +5668,11 @@ public class WindowManagerService extends IWindowManager.Stub
         ShutdownThread.shutdown(mContext, confirm);
     }
 
+    @Override
+    public void reboot(boolean confirm) {
+        ShutdownThread.reboot(mContext, null, confirm);
+    }
+
     // Called by window manager policy.  Not exposed externally.
     @Override
     public void rebootSafeMode(boolean confirm) {
