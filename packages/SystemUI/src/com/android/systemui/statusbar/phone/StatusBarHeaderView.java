@@ -28,6 +28,7 @@ import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.MathUtils;
 import android.util.TypedValue;
 import android.view.View;
@@ -39,6 +40,7 @@ import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.os.PowerManager;
 
 import com.android.keyguard.KeyguardStatusView;
 import com.android.systemui.BatteryMeterView;
@@ -59,7 +61,7 @@ import java.text.NumberFormat;
  */
 public class StatusBarHeaderView extends RelativeLayout implements View.OnClickListener,
         BatteryController.BatteryStateChangeCallback, NextAlarmController.NextAlarmChangeCallback,
-        EmergencyListener {
+        EmergencyListener, View.OnLongClickListener {
 
     private boolean mExpanded;
     private boolean mListening;
@@ -138,6 +140,7 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
         mSystemIconsSuperContainer = findViewById(R.id.system_icons_super_container);
         mSystemIconsContainer = (ViewGroup) findViewById(R.id.system_icons_container);
         mSystemIconsSuperContainer.setOnClickListener(this);
+        mSystemIconsSuperContainer.setOnLongClickListener(this);
         mDateGroup = findViewById(R.id.date_group);
         mClock = findViewById(R.id.clock);
         mTime = (TextView) findViewById(R.id.time_view);
@@ -531,6 +534,19 @@ public class StatusBarHeaderView extends RelativeLayout implements View.OnClickL
                 mActivityStarter.startPendingIntentDismissingKeyguard(showIntent);
             }
         }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        Log.d("StatusBarHeaderView", "onLongClick: " + v.toString());
+        if (v == mSystemIconsSuperContainer) {
+            PowerManager pm = (PowerManager) getContext().getSystemService(Context.POWER_SERVICE);
+            if (!pm.setPowerSaveMode(!pm.isPowerSaveMode())) {
+                Log.w("StatusBarHeaderView", "Setting power save mode failed");
+            }
+            return true;
+        }
+        return false;
     }
 
     private void startSettingsActivity() {
