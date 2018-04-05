@@ -98,21 +98,7 @@ public class NumPadKey extends ViewGroup {
         mDigitText.setText(Integer.toString(mDigit));
         mKlondikeText = (TextView) findViewById(R.id.klondike_text);
 
-        if (mDigit >= 0) {
-            if (sKlondike == null) {
-                sKlondike = getResources().getStringArray(R.array.lockscreen_num_pad_klondike);
-            }
-            if (sKlondike != null && sKlondike.length > mDigit) {
-                String klondike = sKlondike[mDigit];
-                final int len = klondike.length();
-                if (len > 0) {
-                    mKlondikeText.setText(klondike);
-                } else {
-                    mKlondikeText.setVisibility(View.INVISIBLE);
-                }
-            }
-        }
-
+        updateText();
         setBackground(mContext.getDrawable(R.drawable.ripple_drawable));
         setContentDescription(mDigitText.getText().toString());
     }
@@ -123,6 +109,11 @@ public class NumPadKey extends ViewGroup {
 
         // Reset the "announced headset" flag when detached.
         ObscureSpeechDelegate.sAnnouncedHeadset = false;
+    }
+
+    public void setDigit(int digit) {
+        mDigit = digit;
+        updateText();
     }
 
     @Override
@@ -159,6 +150,24 @@ public class NumPadKey extends ViewGroup {
             performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY,
                     HapticFeedbackConstants.FLAG_IGNORE_VIEW_SETTING
                     | HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+        }
+    }
+
+    private void updateText() {
+        if (mDigit >= 0) {
+            mDigitText.setText(Integer.toString(mDigit));
+            if (sKlondike == null) {
+                sKlondike = getResources().getStringArray(R.array.lockscreen_num_pad_klondike);
+            }
+            if (sKlondike != null && sKlondike.length > mDigit) {
+                String klondike = sKlondike[mDigit];
+                final int len = klondike.length();
+                if (len > 0) {
+                    mKlondikeText.setText(klondike);
+                } else {
+                    mKlondikeText.setVisibility(View.INVISIBLE);
+                }
+            }
         }
     }
 }
